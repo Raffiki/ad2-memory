@@ -286,6 +286,7 @@
  ; - als Di = 1 maak dit blok globaal vrij
  ; - als Di = 0 maak dit blok lokaal vrij en maak een willekeurig blok op deze index vrij
  (define (push-free addr)
+   ;(if (and (number? addr) (positive? addr) (< addr (- memory-size 1)))
    (let*
        ((idx (abs(index addr)))
         (d (d idx)))

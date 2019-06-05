@@ -2,7 +2,7 @@
 
 (import (rnrs base)
         (rnrs io simple)
-         (a-d memory manual vectors exponential (3)))
+        (a-d memory manual vectors exponential-lazy-buddy-system))
   
 ;; UTILS
 ;;======
@@ -42,7 +42,7 @@
     (print-memory)
     (free-block v1)
     (print-memory)
-    (free-block v3)
+    ;(free-block v3) ; dit blok is nooit gealloceerd
     (print-memory)
     (let [(v4 (make-block 10))]
       (print-memory)
@@ -59,14 +59,14 @@
                      (cons v (loop))))))
   ;deallocate 4 of them
   (free-block (list-ref vs 0))
-  (free-block (list-ref vs 1))
-  (free-block (list-ref vs 2))
-  (free-block (list-ref vs 3))
-  (print-memory)
-  ;this will only work if all locally-free memory has been coalesced
-  (let [(new-vec (make-block 40))] 
-    (assert (not (eq? new-vec null)))
-    (print-memory)))
+              (free-block (list-ref vs 1))
+              (free-block (list-ref vs 2))
+              (free-block (list-ref vs 3))
+              (print-memory)
+              ;this will only work if all locally-free memory has been coalesced
+              (let [(new-vec (make-block 40))] 
+                (assert (not (eq? new-vec null)))
+                (print-memory)))
 
 
 ;; USAGE
@@ -75,3 +75,15 @@
 ;; e.g.
 ;; > (initialize)
 ;; > (test-1)
+
+(define tests (list test-1 test-3 test-2))
+(map
+ (lambda (test)
+   (newline)
+   (display "=======> ")(write test)(display " <========")
+   (newline)
+   (initialize)
+   (test)
+   (newline)
+   (newline))
+ tests)
