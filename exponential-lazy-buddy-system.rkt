@@ -179,12 +179,12 @@
              (let*
                  ((size (size index))
                   (buddy-addr (+ addr size)))
-               (next!     buddy-addr null)
-               (previous! buddy-addr null)
-               (free!  index buddy-addr)
-               (allocate-inc index)
-               (loc-free-inc index)
-               (free-tail!  index buddy-addr)
+               (next!     buddy-addr null)     ; Deze functie wordt enkel aangeroepen als er op de index geen vrij blok is
+               (previous! buddy-addr null)     ; Idem.
+               (free!  index buddy-addr)       ; Dus het buddy adres is het eerste vrije blok
+               (free-tail!  index buddy-addr)  ; En tevens het laatste,
+               (allocate-inc index)            ; Een split gebeurt om 1 deel te alloceren (dit is ook zo bij recursieve oproep)
+               (loc-free-inc index)            ; Het ander deel komt lokaal vrij.
                (index! buddy-addr index)
                (index! addr index)
                addr)))))
